@@ -1,6 +1,3 @@
-Here’s a polished, **GitHub-ready README.md** version of your project.
-I’ve styled it with markdown best practices, emojis, headers, and syntax highlighting for SQL so that it looks clean, professional, and engaging:
-
 ````markdown
 # 🗂️ Global Tech Layoffs Data Cleaning (SQL)
 
@@ -134,11 +131,4 @@ FROM layoffs_staging;
 * Real-world challenges: typos, inconsistent formats, MySQL safe mode
 * Strong foundation for **dashboards & business insights**
 
----
 
-📌 *Next step:* Create visualizations & insights dashboards using the cleaned dataset!
-
-```
-
-Would you like me to also **add badges (MySQL, SQL, Data Cleaning)** and maybe a **table of contents** at the top to make it even more “GitHub-pro project” style?
-```
