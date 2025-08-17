@@ -460,6 +460,7 @@ SELECT *
 FROM Company_Year_Rank
 WHERE ranking <= 5;
 
+
 ✅ Summary of Insights from SQL EDA
 
 Identified companies with 100% layoffs (full shutdowns).
