@@ -335,114 +335,106 @@ FROM layoffs_staging2;
 -- 🎉 DATA IS NOW CLEANED & READY FOR ANALYSIS
 -- ========================================================
 
-## 📅 Next Steps  
+-- ========================================================
+-- 📌 EXPLORATORY DATA ANALYSIS (EDA): Global Tech Layoffs
+-- Goal: Use the cleaned dataset (layoffs_staging2) to 
+--       explore trends, patterns, and insights.
+-- Steps:
+--   1. Preview dataset
+--   2. Company-level analysis
+--   3. Industry & country trends
+--   4. Time-based analysis
+--   5. Ranking & advanced insights
+-- ========================================================
 
-The next step after cleaning the raw dataset is to perform **Exploratory Data Analysis (EDA)**.  
-This second project is also inspired by [Alex the Analyst’s SQL EDA tutorial](https://youtu.be/QYd-RtK58VQ?si=RTRvB2Jk078SdCYg).  
-
-Here, we use the **cleaned dataset (`layoffs_staging2`)** from the first project to explore insights and trends.  
-
----
-
-# 📊 SQL Exploratory Data Analysis (EDA)  
-
-Below is the structured SQL script with explanations for each block of analysis:  
-
----
-
-### 🔹 Preview the cleaned dataset  
-```sql
+-- ========================================================
+-- 1. PREVIEW CLEANED DATASET
+-- ========================================================
 SELECT *
 FROM layoffs_staging2;
-🔹 Get maximum layoffs and highest layoff percentage
-sql
-Copy
-Edit
+
+-- ========================================================
+-- 2. COMPANY-LEVEL ANALYSIS
+-- ========================================================
+
+-- Maximum layoffs and highest layoff percentage
 SELECT MAX(total_laid_off), MAX(percentage_laid_off)
 FROM layoffs_staging2;
-🔹 Companies that laid off 100% of their workforce
-sql
-Copy
-Edit
+
+-- Companies that laid off 100% of workforce
 SELECT *
 FROM layoffs_staging2
 WHERE percentage_laid_off = 1
 ORDER BY total_laid_off DESC;
-🔹 Same as above, ordered by funding raised
-sql
-Copy
-Edit
+
+-- Same as above but ordered by funding raised
 SELECT *
 FROM layoffs_staging2
 WHERE percentage_laid_off = 1
 ORDER BY funds_raised_millions DESC;
-🔹 Total layoffs per company
-sql
-Copy
-Edit
+
+-- Total layoffs per company
 SELECT company, SUM(total_laid_off)
 FROM layoffs_staging2
 GROUP BY company
 ORDER BY 2 DESC;
-🔹 Earliest and latest layoff dates
-sql
-Copy
-Edit
-SELECT MIN(`date`), MAX(`date`)
-FROM layoffs_staging2;
-🔹 Total layoffs by industry
-sql
-Copy
-Edit
+
+-- Company-level layoffs per year
+SELECT company, YEAR(`date`), SUM(total_laid_off)
+FROM layoffs_staging2
+GROUP BY company, YEAR(`date`)
+ORDER BY 3 DESC;
+
+-- ========================================================
+-- 3. INDUSTRY & COUNTRY TRENDS
+-- ========================================================
+
+-- Total layoffs by industry
 SELECT industry, SUM(total_laid_off)
 FROM layoffs_staging2
 GROUP BY industry
 ORDER BY 2 DESC;
-🔹 Total layoffs by country
-sql
-Copy
-Edit
+
+-- Total layoffs by country
 SELECT country, SUM(total_laid_off)
 FROM layoffs_staging2
 GROUP BY country
 ORDER BY 2 DESC;
-🔹 Total layoffs per date
-sql
-Copy
-Edit
-SELECT `date`, SUM(total_laid_off)
-FROM layoffs_staging2
-GROUP BY `date`
-ORDER BY 1 DESC;
-🔹 Yearly layoffs trend
-sql
-Copy
-Edit
-SELECT YEAR(`date`), SUM(total_laid_off)
-FROM layoffs_staging2
-GROUP BY YEAR(`date`)
-ORDER BY 1 DESC;
-🔹 Layoffs grouped by funding stage
-sql
-Copy
-Edit
+
+-- Layoffs grouped by funding stage
 SELECT stage, SUM(total_laid_off)
 FROM layoffs_staging2
 GROUP BY stage
 ORDER BY 1 DESC;
-🔹 Monthly layoffs trend (aggregated)
-sql
-Copy
-Edit
+
+-- ========================================================
+-- 4. TIME-BASED ANALYSIS
+-- ========================================================
+
+-- Earliest and latest layoff records
+SELECT MIN(`date`), MAX(`date`)
+FROM layoffs_staging2;
+
+-- Total layoffs per date
+SELECT `date`, SUM(total_laid_off)
+FROM layoffs_staging2
+GROUP BY `date`
+ORDER BY 1 DESC;
+
+-- Total layoffs per year
+SELECT YEAR(`date`), SUM(total_laid_off)
+FROM layoffs_staging2
+GROUP BY YEAR(`date`)
+ORDER BY 1 DESC;
+
+-- Monthly layoffs trend
 SELECT SUBSTRING(`date`,1,7) AS `MONTH`, SUM(total_laid_off)
 FROM layoffs_staging2
 WHERE SUBSTRING(`date`,1,7)
 GROUP BY `MONTH`
 ORDER BY 1 ASC;
-🔹 Rolling total of layoffs (cumulative by month)
-sql
-Copy
-Edit
+
+-- Rolling total of layoffs (cumulative by month)
 WITH Rolling_Total AS (
   SELECT SUBSTRING(`date`,1,7) AS `MONTH`, SUM(total_laid_off) AS total_off
   FROM layoffs_staging2
@@ -452,26 +444,12 @@ WITH Rolling_Total AS (
 )
 SELECT `MONTH`, total_off, SUM(total_off) OVER(ORDER BY `MONTH`) AS rolling_total
 FROM Rolling_Total;
-🔹 Company-level layoffs (totals)
-sql
-Copy
-Edit
-SELECT company, SUM(total_laid_off)
-FROM layoffs_staging2
-GROUP BY company
-ORDER BY 2 DESC;
-🔹 Company layoffs per year
-sql
-Copy
-Edit
-SELECT company, YEAR(`date`), SUM(total_laid_off)
-FROM layoffs_staging2
-GROUP BY company, YEAR(`date`)
-ORDER BY 3 DESC;
-🔹 Top 5 companies by layoffs each year
-sql
-Copy
-Edit
+
+-- ========================================================
+-- 5. RANKING & ADVANCED INSIGHTS
+-- ========================================================
+
+-- Rank companies by layoffs per year (Top 5 each year)
 WITH company_year (company, years, total_laid_off) AS 
 (
   SELECT company, YEAR(`date`), SUM(total_laid_off)
@@ -488,6 +466,10 @@ Company_Year_Rank AS
 SELECT *
 FROM Company_Year_Rank
 WHERE ranking <= 5;
+
+-- ========================================================
+-- 🎉 EDA COMPLETE — TRENDS & INSIGHTS EXTRACTED
+-- ========================================================
 
 ✅ Summary of Insights from SQL EDA
 
